@@ -1,0 +1,16 @@
+.nav-link:hover,
+.nav-link:focus-visible {
+  text-decoration: underline;
+}
+
+.nav-custom {
+  //md
+  @media (min-width: 768px) {
+    font-size: 1.5rem;
+  }
+
+  //lg
+  @media (min-width: 992px) {
+    font-size: 2.5rem;
+  }
+}

@@ -1,0 +1,22 @@
+@import "../bootstrap/custom_scss_values";
+
+.btn {
+  font-weight: 500;
+  letter-spacing: initial;
+  transition: all 0.2s ease 0s;
+  border-color: $african-violet;
+  border-width: 4px;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.9);
+  }
+
+  &:hover {
+    letter-spacing: 0.2px;
+    transition: all 0.2s ease 0s;
+  }
+}
+
+.btn:hover {
+  box-shadow: $focus-box-shadow;
+}

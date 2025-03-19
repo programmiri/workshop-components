@@ -1,0 +1,16 @@
+// This file is the main application css.
+
+// Import Bootstrap config first
+@use "bootstrap/config";
+
+// Import all Bootstrap_ext here
+@use "bootstrap-ext/buttons";
+@use "bootstrap-ext/nav";
+
+// Import Components, Pages etc.
+//@import "components/text-link";
+//@import "components/claim";
+
+strong {
+  font-weight: bold;
+}
