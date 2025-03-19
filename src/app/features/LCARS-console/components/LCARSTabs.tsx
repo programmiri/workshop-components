@@ -1,116 +1,169 @@
-import { useState } from "react";
+import React, { createContext, useContext, useId, useState } from "react";
 import clsx from "clsx";
-import { EngineeringPanel } from "src/app/features/engineering/EngineeringPanel.tsx";
-import { EnergyManagementPanel } from "src/app/features/energy-management/EnergyManagementPanel.tsx";
-import EnterpriseImg from "src/assets/images/enterprise.png";
-import { Image } from "src/app/components/Image.tsx";
 
-const TabNames = {
-  START: "START",
-  ENGINEERING: "ENGINEERING",
-  ENERGY_MANAGEMENT: "ENERGY_MANAGEMENT",
+/**
+ *
+ * Composite Pattern (mit Compound Components)
+ * & Inversion of Control
+ *
+ **/
+
+// Wir definieren einen Typ für Tabs, damit klar ist, was jedes Tab beschreibt
+type TabDefinition = {
+  key: string;
+  label: string;
 };
 
-function LCARSTabs() {
-  const [active, setActive] = useState(TabNames.START);
+// ✅API der Haupt-Komponent LCARSTabs
+// - Bietet die umschließende Struktur
+// - Definiert statische Properties (List, Tab, Panels, Panel) für Compound Components
+type LCARSTabs = React.FC<{
+  children: React.ReactNode;
+  defaultTabKey: TabDefinition["key"];
+}> & {
+  List: typeof TabList;
+  Tab: typeof Tab;
+  Panels: typeof TabPanels;
+  Panel: typeof TabPanel;
+};
+
+// ✅ Context für Inversion of Control
+// - Die Tabs selbst kontrollieren den aktiven Tab nicht mehr direkt.
+// - Stattdessen wird die Logik ausgelagert und von einem zentralen Provider gesteuert.
+// - Die Kontrolle wird von den Tabs abgegeben.
+const TabsContext = createContext<{
+  activeKey: string | null;
+  setActiveKey: (key: string) => void;
+}>({
+  activeKey: null,
+  setActiveKey: () => {},
+});
+
+// ✅ Provider-Komponente
+// - Kapselt State-Logik und stellt diese via Context zur Verfügung
+// - Inversion of Control: Die State-Verwaltung passiert hier, nicht in den Tab Komponenten
+// - Interne "setActiveKey" kann jetzt erweitert werden, ohne die Tab Komponenten zu verändern.
+// - Das ist das Open/Closed Prinzip!
+// - Mögliche Erweiterungen wären:
+//   - Ein Analytik Event aufrufen
+//   - Api Abruf bei Tab Click
+//   - URL Updates (für Deep Links)
+function TabsProvider({
+  defaultTabKey,
+  children,
+}: {
+  defaultTabKey: string;
+  children: React.ReactNode;
+}) {
+  const [activeKeyInternal, setActiveKeyInternal] = useState<string | null>(
+    defaultTabKey ?? null
+  );
+
+  function setActiveKey(key: string) {
+    setActiveKeyInternal(key);
+  }
 
   return (
-    <div className="container mt-4">
-      <div
-        className="nav nav-custom nav-pills"
-        role="tablist"
-        aria-label={"Console"}
-      >
-        <button
-          className={clsx("nav-link", active === TabNames.START && "active")}
-          id="tab1"
-          role="tab"
-          aria-controls="panel1"
-          aria-selected={active === TabNames.START ? "true" : "false"}
-          onClick={() => setActive(TabNames.START)}
-        >
-          Start
-        </button>
-        <button
-          className={clsx(
-            "nav-link",
-            active === TabNames.ENGINEERING && "active"
-          )}
-          id="tab2"
-          role="tab"
-          aria-controls="panel2"
-          aria-selected={active === TabNames.ENGINEERING ? "true" : "false"}
-          onClick={() => setActive(TabNames.ENGINEERING)}
-        >
-          Engineering
-        </button>
-        <button
-          className={clsx(
-            "nav-link",
-            active === TabNames.ENERGY_MANAGEMENT && "active"
-          )}
-          id="tab3"
-          role="tab"
-          aria-controls="panel3"
-          aria-selected={
-            active === TabNames.ENERGY_MANAGEMENT ? "true" : "false"
-          }
-          onClick={() => setActive(TabNames.ENERGY_MANAGEMENT)}
-        >
-          Energie Management
-        </button>
-      </div>
+    <TabsContext.Provider
+      value={{ activeKey: activeKeyInternal, setActiveKey }}
+    >
+      {children}
+    </TabsContext.Provider>
+  );
+}
 
-      <div className="mt-5">
-        {active === TabNames.START && (
-          <div id="panel1" role="tabpanel" aria-labelledby="tab1">
-            <h1 className={"mb-5"}>
-              <Image
-                src={EnterpriseImg}
-                alt={""}
-                aria-hidden={true}
-                type={"fluid"}
-                width={70}
-                height={70}
-                className={"pe-2"}
-              />
-              Hallo, nugneH, shacha, peldor joi
-            </h1>
-            <hr />
-            <p className={"fst-italic py-5"}>
-              Sternenflotten-Hauptsystem online. Zugriff auf Schiffsfunktionen
-              gewährt.
-            </p>
-            <hr />
-          </div>
-        )}
-        {active === TabNames.ENGINEERING && (
-          <div id="panel2" role="tabpanel" aria-labelledby="tab2">
-            <section aria-labelledby="engineering-title">
-              <h1 className={"mb-5"} id={"engineering-title"}>
-                Engineering
-              </h1>
-              <hr />
-              <EngineeringPanel />
-              <hr />
-            </section>
-          </div>
-        )}
-        {active === TabNames.ENERGY_MANAGEMENT && (
-          <div id="panel3" role="tabpanel" aria-labelledby="tab3">
-            <section aria-labelledby="energy-management-title">
-              <h1 className={"mb-5"} id={"energy-management-title"}>
-                Energie Management
-              </h1>
-              <hr />
-              <EnergyManagementPanel />
-              <hr />
-            </section>
-          </div>
-        )}
-      </div>
+// ✅ View-Only Komponente für Tab-Leiste
+// - "Dumb" Component
+const LCARSTabs: LCARSTabs = ({ children, defaultTabKey }) => {
+  return (
+    <TabsProvider defaultTabKey={defaultTabKey}>
+      <div className="container mt-4">{children}</div>
+    </TabsProvider>
+  );
+};
+
+// ✅ View-Only Komponente für Tab-Liste
+// - "Dumb" Component
+function TabList({
+  children,
+  label,
+}: {
+  children: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <div className="nav nav-custom nav-pills" role="tablist" aria-label={label}>
+      {children}
     </div>
   );
 }
 
+// ✅ Tab Button
+// - Fragt den aktuellen aktiven Tab aus dem Context ab und reagiert darauf
+// - Ändert bei Klick den aktiven Tab (weiss aber nicht, was sonst noch passiert)
+// - Trennung von Logik (Context) und Darstellung (Button)
+function Tab({ tab }: { tab: TabDefinition }) {
+  const { activeKey, setActiveKey } = useContext(TabsContext);
+
+  return (
+    <button
+      className={clsx("nav-link", activeKey === tab.key && "active")}
+      id={`tab-${tab.key}`}
+      role="tab"
+      aria-controls={`panel-${tab.key}`}
+      aria-selected={activeKey === tab.key ? "true" : "false"}
+      onClick={() => setActiveKey(tab.key)}
+    >
+      {tab.label}
+    </button>
+  );
+}
+
+// ✅ Container für alle Panels
+// - Rein visuelles Layout ohne Logik
+// - "Dumb" Component
+function TabPanels({ children }: { children: React.ReactNode }) {
+  return <div className="mt-5">{children}</div>;
+}
+
+// ✅ Ein Panel für den jeweiligen Tab
+// - Zeigt Inhalte nur, wenn der aktive Key übereinstimmt
+// - Nutzt useId für gute Accessibility
+function TabPanel({
+  tabKey,
+  headline,
+  children,
+}: {
+  tabKey: string;
+  headline: string | React.ReactElement;
+  children: React.ReactNode;
+}) {
+  const headerId = useId();
+  const { activeKey } = useContext(TabsContext);
+
+  return activeKey === tabKey ? (
+    <div
+      id={`panel-${tabKey}`}
+      role="tabpanel"
+      aria-labelledby={`tab-${tabKey}`}
+    >
+      <section aria-labelledby={headerId}>
+        <h1 className="mb-5" id={headerId}>
+          {headline}
+        </h1>
+        <hr role="presentation" />
+        {children}
+        <hr role="presentation" />
+      </section>
+    </div>
+  ) : null;
+}
+
+LCARSTabs.List = TabList;
+LCARSTabs.Tab = Tab;
+LCARSTabs.Panels = TabPanels;
+LCARSTabs.Panel = TabPanel;
+
 export { LCARSTabs };
+
+export type { TabDefinition };

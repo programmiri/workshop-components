@@ -1,26 +1,27 @@
 import { EngineeringPanel } from "src/app/features/engineering/EngineeringPanel.tsx";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import {
-  getWarpCoreStatusFirst,
-  getShieldStatusFirst,
-  getLifeSupportStatusFirst,
-  getWeaponsStatusFirst,
+  getWarpCoreStatusSecond,
+  getShieldStatusSecond,
+  getLifeSupportStatusSecond,
+  getWeaponsStatusSecond,
 } from "src/api/sensors.ts";
 
 jest.mock("src/api/sensors.ts");
 
-const mockGetWarpCoreStatusFirst =
-  getWarpCoreStatusFirst as jest.MockedFunction<typeof getWarpCoreStatusFirst>;
-const mockGetShieldStatusFirst = getShieldStatusFirst as jest.MockedFunction<
-  typeof getShieldStatusFirst
->;
-const mockGetLifeSupportStatusFirst =
-  getLifeSupportStatusFirst as jest.MockedFunction<
-    typeof getLifeSupportStatusFirst
+const mockGetWarpCoreStatusSecond =
+  getWarpCoreStatusSecond as jest.MockedFunction<
+    typeof getWarpCoreStatusSecond
   >;
-const mockGetWeaponsStatusFirst = getWeaponsStatusFirst as jest.MockedFunction<
-  typeof getWeaponsStatusFirst
+const mockGetShieldStatusSecond = getShieldStatusSecond as jest.MockedFunction<
+  typeof getShieldStatusSecond
 >;
+const mockGetLifeSupportStatusSecond =
+  getLifeSupportStatusSecond as jest.MockedFunction<
+    typeof getLifeSupportStatusSecond
+  >;
+const mockGetWeaponsStatusSecond =
+  getWeaponsStatusSecond as jest.MockedFunction<typeof getWeaponsStatusSecond>;
 
 // NOTIZ VON MIRJAM:
 // Diese Mocks verwenden wenn ihr die "Api" updated!
@@ -44,10 +45,10 @@ const sensors = ["Warp-Kern", "Schilde", "Lebenserhaltung", "Waffen"];
 
 describe("EngineeringPanel", () => {
   beforeEach(async () => {
-    mockGetWarpCoreStatusFirst.mockResolvedValue({ data: "SUPER STABLE" });
-    mockGetShieldStatusFirst.mockResolvedValue({ data: "SUPER ACTIVE" });
-    mockGetLifeSupportStatusFirst.mockResolvedValue({ data: "100000" });
-    mockGetWeaponsStatusFirst.mockResolvedValue({ data: "SUPER OFFLINE" });
+    mockGetWarpCoreStatusSecond.mockResolvedValue({ health: "Critical" });
+    mockGetShieldStatusSecond.mockResolvedValue({ active: true });
+    mockGetLifeSupportStatusSecond.mockResolvedValue({ oxygenLevel: 100000 });
+    mockGetWeaponsStatusSecond.mockResolvedValue({ status: "Offline" });
 
     // NOTIZ VON MIRJAM:
     // Diese Mocks verwenden wenn ihr die "Api" updated!
@@ -63,7 +64,7 @@ describe("EngineeringPanel", () => {
     // damit dieser Error nicht geworfen gelogged wird:
     // An update to EngineeringPanel inside a test was not wrapped in act(...).
     // -> eindeutig schlechtes Zeichen
-    await waitFor(() => screen.getByText(/SUPER STABLE/));
+    await waitFor(() => screen.getByText(/Offline/));
   });
 
   it("shows the headline", () => {
@@ -92,7 +93,7 @@ describe("EngineeringPanel", () => {
 
     expect(warpCore).toBeVisible();
     expect(warpCore).toHaveTextContent(sensors[sensorIndex]);
-    expect(warpCore).toHaveTextContent(/SUPER STABLE/);
+    expect(warpCore).toHaveTextContent(/Critical/);
   });
 
   it("shows the status for shields", () => {
@@ -102,7 +103,7 @@ describe("EngineeringPanel", () => {
 
     expect(shields).toBeVisible();
     expect(shields).toHaveTextContent(sensors[sensorIndex]);
-    expect(shields).toHaveTextContent(/SUPER ACTIVE/);
+    expect(shields).toHaveTextContent(/Active/);
   });
 
   it("shows the status for life support", () => {
@@ -122,6 +123,6 @@ describe("EngineeringPanel", () => {
 
     expect(weapons).toBeVisible();
     expect(weapons).toHaveTextContent(sensors[sensorIndex]);
-    expect(weapons).toHaveTextContent(/SUPER OFFLINE/);
+    expect(weapons).toHaveTextContent(/Offline/);
   });
 });

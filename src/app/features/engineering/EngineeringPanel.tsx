@@ -1,35 +1,20 @@
-import { useEffect, useState } from "react";
-import {
-  getWarpCoreStatusFirst,
-  getShieldStatusFirst,
-  getLifeSupportStatusFirst,
-  getWeaponsStatusFirst,
-} from "src/api/sensors";
 import clsx from "clsx";
+import { useWarpCoreSensor } from "src/app/hooks/useWarpCoreSensor.tsx";
+import { useShieldSensor } from "src/app/hooks/useShieldSensor.tsx";
+import { useLifeSupportSensor } from "src/app/hooks/useLifeSupportSensor.tsx";
+import { useWeaponsSensor } from "src/app/hooks/useWeaponsSensor.tsx";
 
+// EngineeringPanel
+// - Hier passiert jetzt nur noch View-Logik! (Separation of Concerns)
+// - Die Sensor-Daten kommen aus Custom Hooks, die von einer Factory generiert wurden
+// - Die Komponente ist dadurch einfach testbar und leicht erweiterbar
+// - Die Komponente könnte noch vereinfacht werden, in dem wiederkehrende UI Muster
+//   in wiederverwendbare Komponenten ausgelagert werden.
 function EngineeringPanel() {
-  const [warpCoreStatus, setWarpCoreStatus] = useState("Loading...");
-  const [shieldStatus, setShieldStatus] = useState("Loading...");
-  const [lifeSupportStatus, setLifeSupportStatus] = useState("Loading...");
-  const [weaponsStatus, setWeaponsStatus] = useState("Loading...");
-
-  useEffect(() => {
-    async function fetchStatuses() {
-      const warpCoreData = await getWarpCoreStatusFirst();
-      setWarpCoreStatus(warpCoreData.data);
-
-      const shieldData = await getShieldStatusFirst();
-      setShieldStatus(shieldData.data);
-
-      const lifeSupportData = await getLifeSupportStatusFirst();
-      setLifeSupportStatus(lifeSupportData.data);
-
-      const weaponsSupportData = await getWeaponsStatusFirst();
-      setWeaponsStatus(weaponsSupportData.data);
-    }
-
-    fetchStatuses();
-  }, []);
+  const warpCoreStatus = useWarpCoreSensor();
+  const shieldStatus = useShieldSensor();
+  const lifeSupportStatus = useLifeSupportSensor();
+  const weaponsStatus = useWeaponsSensor();
 
   return (
     <>
@@ -40,12 +25,12 @@ function EngineeringPanel() {
           <div
             className={clsx(
               "badge align-self-center",
-              warpCoreStatus === "Critical"
+              warpCoreStatus.statusLevel === "ALERT"
                 ? "text-bg-danger"
                 : "text-bg-success"
             )}
           >
-            {warpCoreStatus}
+            {warpCoreStatus.message}
           </div>
         </li>
         <li className={"d-flex list-group-item gap-3"}>
@@ -53,10 +38,12 @@ function EngineeringPanel() {
           <div
             className={clsx(
               "badge align-self-center",
-              shieldStatus === "Active" ? "text-bg-danger" : "text-bg-success"
+              shieldStatus.statusLevel === "ALERT"
+                ? "text-bg-danger"
+                : "text-bg-success"
             )}
           >
-            {shieldStatus}
+            {shieldStatus.message}
           </div>
         </li>
         <li className={"d-flex list-group-item gap-3"}>
@@ -64,12 +51,12 @@ function EngineeringPanel() {
           <div
             className={clsx(
               "badge align-self-center",
-              Number(lifeSupportStatus) <= 50
+              lifeSupportStatus.statusLevel === "ALERT"
                 ? "text-bg-danger"
                 : "text-bg-success"
             )}
           >
-            {lifeSupportStatus}
+            {lifeSupportStatus.message}
           </div>
         </li>
         <li className={"d-flex list-group-item gap-3"}>
@@ -77,10 +64,12 @@ function EngineeringPanel() {
           <div
             className={clsx(
               "badge align-self-center",
-              weaponsStatus === "Offline" ? "text-bg-danger" : "text-bg-success"
+              weaponsStatus.statusLevel === "ALERT"
+                ? "text-bg-danger"
+                : "text-bg-success"
             )}
           >
-            {weaponsStatus}
+            {weaponsStatus.message}
           </div>
         </li>
       </ul>

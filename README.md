@@ -7,7 +7,7 @@
   - Die Skripte starten dann mit `npm run`
 - `pnpm dev`, App läuft dann unter: http://localhost:5173/
 - `pnpm lint` fürs Linting
-- `pnpm reformat` für Code Formattierung
+- `pnpm reformat` für Code Formatierung
 - `pmpm test` um die Tests laufen zu lassen
 
 ## Tech Stack
@@ -28,7 +28,7 @@
   - 📃 [Documentation](https://testing-library.com/docs/react-testing-library/intro/)
   - 🐙 [code](https://github.com/testing-library/react-testing-library)
 
-⚠️ Um die App möglichst einfach benutzbar zu machen in diesem Worksop, gibt es keine weiteren Libraries wie Store. Es
+⚠️ Um die App möglichst einfach benutzbar zu machen in diesem Workshop, gibt es keine weiteren Libraries wie Store. Es
 gibt auch kein Backend oder echte Apis die wir benutzen.
 
 ## Die App
@@ -36,7 +36,7 @@ gibt auch kein Backend oder echte Apis die wir benutzen.
 Wir arbeiten an einer LCARS ("Library Computer Access/Retrieval System") basierte App, die es uns ermöglicht:
 
 - Status der Systeme zu checken
-- Die Energyverwaltung des Schiffes zu sehen und zu ändern
+- Die Energieverwaltung des Schiffes zu sehen und zu ändern
 
 ## Das Repo
 
@@ -49,7 +49,7 @@ nichts ändern, da Tests und Test Mocks darauf angepasst sind.
 
 ### `app`
 
-Hier findet ihr alles relevant für unser Web App. Die Ordner Structur ist wie folgt gedacht:
+Hier findet ihr alles relevant für unser Web App. Die Ordner Struktur ist wie folgt gedacht:
 
 ### `app/components`
 
@@ -74,11 +74,11 @@ Dieser Ordner ist für unsere eigenen Hooks gedacht. Auf dieser Ebenen direkt so
 
 ### `app/layout`
 
-Hier liegen Komponenten die sich strikt mit Layout beschäftigen.
+Hier liegen Komponenten, die sich strikt mit Layout beschäftigen.
 
 ### `app/pages`
 
-Hier liegen die Eingangeskomponenten für eine bestimmte Seite, dies könnte der Routing Struktur entsprechen. Wir haben nur einen Startseite, deshalb liegt da nur die `index.ts`
+Hier liegen die Eingangskomponenten für eine bestimmte Seite, dies könnte der Routing Struktur entsprechen. Wir haben nur eine Startseite, deshalb liegt da nur die `index.ts`
 
 ## Die Aufgaben
 

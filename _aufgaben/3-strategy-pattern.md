@@ -1,11 +1,12 @@
 # 3. Aufgabe: [`EnergyManagementPanel`](../src/app/features/energy-management/EnergyManagementPanel.tsx)
 
-👉 Ziel: Energieverteilungen flexibel steuern, State-Management aus der Komponente herauslösen und durch das Strategy Pattern offen für Erweiterungen machen
+👉 Ziel: Energieverteilungen flexibel steuern, State-Management aus der Komponente herauslösen und durch das Strategy 
+Pattern offen für Erweiterungen machen.
 
 ## Problem
 
 - `EnergyManagementPanel` hat zu viele Verantwortlichkeiten - "API" calls, States händeln, States und "Backend"
-  updaten, Anzeigen... sogar
+  updaten, Anzeigen...
   sie ist sogar die Source of Truth, wie die Energy verteilt werden soll!
 - "Api"-Calls, View und State sind zusammengepackt.
 - Die Tests waren wieder brüchig und ich musste die etwas unschön stabil bekommen (🚨)
@@ -73,7 +74,6 @@ Refaktoriere deine aktuelle Implementation, in dem du ein Strategy Pattern benut
 
 ### Lesematerial
 
-- https://gofore.com/en/advanced-react-hooks-the-strategy-pattern/
 - https://gofore.com/en/advanced-react-hooks-the-strategy-pattern/
 - https://www.creowis.com/blog/openclosed-principle-writing-scalable-code-in-react-cm6ss4ysh000409l78x7a7vt4
 
