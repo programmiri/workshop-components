@@ -117,7 +117,6 @@ Oder, für noch bessere Leserlichkeit bzw. Abbildung eurer Intention:
 - Die Kontrolle kann in `LCARSTabs` liegen - oder sogar woanders? (Inversion of Control)
 - Was ist, wenn wir wissen, dass bald mehr passieren muss, wenn ein User auf einen Tab klickt (z.b. ein Analytic
   Event getriggert wird? Können wir uns darauf vorbereiten? (Open/CLosed Prinzip)
--
 
 ## Von Theorie zu Praxis
 
